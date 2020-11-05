@@ -30,4 +30,12 @@ public class CircularGravity : MonoBehaviour
         forceDirection = (centerOfEarth.position - transform.position).normalized;
         playerRB.AddForce(forceValue * forceDirection);
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject)
+        {
+            centerOfEarth = collision.gameObject.transform;
+        }
+    }
 }

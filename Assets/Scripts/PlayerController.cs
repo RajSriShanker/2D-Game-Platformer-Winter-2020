@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
 
     public float jumpForce;
+    public float movementSpeed;
 
     Rigidbody2D playerRB;
     // Start is called before the first frame update
@@ -17,18 +18,38 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        //Default Gravity
+        if (GetComponent<CircularGravity>().enabled == false)
         {
-            playerRB.AddForce(Vector2.up * jumpForce);
+            playerRB.gravityScale = 1;
+        }
+        else
+        {
+            playerRB.gravityScale = 0;
+        }
+
+        Debug.DrawLine(this.transform.position, this.transform.position + this.transform.right, Color.red);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Platform")
+        {
+            GetComponent<CircularGravity>().enabled = true;
+            GetComponent<DragNShoot>().enabled = true;
+            GetComponent<TrajectoryLine>().enabled = true;
+            this.transform.parent = collision.transform;
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision)
+        if (collision.gameObject.tag == "Platform")
         {
-            Debug.Log(collision);
-            GameObject.Find("Player").GetComponent<CircularGravity>().centerOfEarth = collision.gameObject.transform;
+            GetComponent<CircularGravity>().enabled = false;
+            GetComponent<DragNShoot>().enabled = false;
+            GetComponent<TrajectoryLine>().enabled = false;
+            this.transform.parent = null;
         }
     }
 }
